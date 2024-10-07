@@ -107,9 +107,10 @@ export default function LessonPage() {
         setTestWord(sentence.questions[count]);
       }
 
-      if (sentence.questions.length === count) {
+      if (sentence.questions.length === count) { 
         setCountCompletedTest(countCompletedTest + 1);
-        if (countCompletedTest === test.length) {
+        const countCompleted = countCompletedTest + 1;
+        if (countCompleted === test.length) {
           setCompletedTest(true);
           setAnswer("You Completed Test!!!");
         } else {
