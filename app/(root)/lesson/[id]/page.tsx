@@ -3,6 +3,130 @@ import { Button } from 'core_ui_design_system';
 import { useEffect, useState } from 'react';
 import styles from './styles.module.css';
 
+
+interface SubQuestion {
+  id: number,
+  name: string,
+  isCorrect: boolean
+}
+
+interface Question {
+  id: number,
+  name: string,
+  subQuestions: Array<SubQuestion>
+}
+
+interface Sentence {
+  id: number,
+  sentence: string;
+  isCompleted: boolean;
+  questions: Array<Question>
+};
+
+const startTest = [
+  {
+    id: 1,
+    sentence: "Ти покажеш?",
+    isCompleted: false,
+    questions: [
+      {
+        id: 1, 
+        name: "first word", 
+        subQuestions: [
+          { id: 1, name: "Does", isCorrect: false },
+          { id: 2, name: "Will", isCorrect: true },
+          { id: 3, name: "Did", isCorrect: false },
+          { id: 4, name: "Are", isCorrect: false },
+        ]
+      },
+      {
+        id: 2, 
+        name: "second word",
+        subQuestions: [
+          { id: 1, name: "I", isCorrect: false },
+          { id: 2, name: "He", isCorrect: false },
+          { id: 3, name: "You", isCorrect: true },
+          { id: 4, name: "We", isCorrect: false },
+        ]
+      },
+      {
+        id: 3, 
+        name: "third word",
+        subQuestions: [
+          { id: 1, name: "Hide?", isCorrect: false },
+          { id: 2, name: "Screen?", isCorrect: false },
+          { id: 3, name: "Try?", isCorrect: false },
+          { id: 4, name: "Show?", isCorrect: true },
+        ]
+      },
+    ],
+  },
+  {
+    id: 2,
+    sentence: "Вона почала?",
+    isCompleted: false,
+    questions: [
+      {
+        id: 1, 
+        name: "first word", 
+        subQuestions: [
+          { id: 1, name: "Does", isCorrect: false },
+          { id: 2, name: "Will", isCorrect: false },
+          { id: 3, name: "Did", isCorrect: true },
+          { id: 4, name: "Are", isCorrect: false },
+        ]
+      },
+      {
+        id: 2, 
+        name: "second word", 
+        subQuestions: [
+          { id: 1, name: "I", isCorrect: false },
+          { id: 2, name: "She", isCorrect: true },
+          { id: 3, name: "You", isCorrect: false },
+          { id: 4, name: "We", isCorrect: false },
+        ]
+      },
+      {
+        id: 3, 
+        name: "third word", 
+        subQuestions: [
+          { id: 1, name: "Start?", isCorrect: true },
+          { id: 2, name: "Screen?", isCorrect: false },
+          { id: 3, name: "Try?", isCorrect: false },
+          { id: 4, name: "Show?", isCorrect: false },
+        ]
+      },
+    ],
+  },
+  {
+    id: 3,
+    sentence: "Я розумію.",
+    isCompleted: false,
+    questions: [
+      {
+        id: 1, 
+        name: "first word", 
+        subQuestions: [
+          { id: 1, name: "I", isCorrect: true },
+          { id: 2, name: "He", isCorrect: false },
+          { id: 3, name: "She", isCorrect: false },
+          { id: 4, name: "It", isCorrect: false },
+        ]
+      },
+      {
+        id: 2, 
+        name: "second word", 
+        subQuestions: [
+          { id: 1, name: "start.", isCorrect: false },
+          { id: 2, name: "screen.", isCorrect: false },
+          { id: 3, name: "understand.", isCorrect: true },
+          { id: 4, name: "show.", isCorrect: false },
+        ]
+      },
+    ],
+  }
+];
+
 export default function LessonPage() {
   const [answer, setAnswer] = useState("");
   const [isNotCorrect, setIsNotCorrect] = useState(false);
@@ -11,94 +135,11 @@ export default function LessonPage() {
   const [testId, setTestId] = useState(0);
   const [countCompletedTest, setCountCompletedTest] = useState<number>(0);
 
-
-  const startTest = [
-    {
-      sentence: "Ти покажеш?",
-      questions: [
-        {
-          id: 1, name: "first word", subQuestions: [
-            { id: 1, name: "Does", isCorrect: false },
-            { id: 2, name: "Will", isCorrect: true },
-            { id: 3, name: "Did", isCorrect: false },
-            { id: 4, name: "Are", isCorrect: false },
-          ]
-        },
-        {
-          id: 2, name: "second word", subQuestions: [
-            { id: 1, name: "I", isCorrect: false },
-            { id: 2, name: "He", isCorrect: false },
-            { id: 3, name: "You", isCorrect: true },
-            { id: 4, name: "We", isCorrect: false },
-          ]
-        },
-        {
-          id: 3, name: "third word", subQuestions: [
-            { id: 1, name: "Hide?", isCorrect: false },
-            { id: 2, name: "Screen?", isCorrect: false },
-            { id: 3, name: "Try?", isCorrect: false },
-            { id: 4, name: "Show?", isCorrect: true },
-          ]
-        },
-      ],
-    },
-    {
-      sentence: "Вона почала?",
-      questions: [
-        {
-          id: 1, name: "first word", subQuestions: [
-            { id: 1, name: "Does", isCorrect: false },
-            { id: 2, name: "Will", isCorrect: false },
-            { id: 3, name: "Did", isCorrect: true },
-            { id: 4, name: "Are", isCorrect: false },
-          ]
-        },
-        {
-          id: 2, name: "second word", subQuestions: [
-            { id: 1, name: "I", isCorrect: false },
-            { id: 2, name: "She", isCorrect: true },
-            { id: 3, name: "You", isCorrect: false },
-            { id: 4, name: "We", isCorrect: false },
-          ]
-        },
-        {
-          id: 3, name: "third word", subQuestions: [
-            { id: 1, name: "Start?", isCorrect: true },
-            { id: 2, name: "Screen?", isCorrect: false },
-            { id: 3, name: "Try?", isCorrect: false },
-            { id: 4, name: "Show?", isCorrect: false },
-          ]
-        },
-      ],
-    },
-    {
-      sentence: "Я розумію.",
-      questions: [
-        {
-          id: 1, name: "first word", subQuestions: [
-            { id: 1, name: "I", isCorrect: true },
-            { id: 2, name: "He", isCorrect: false },
-            { id: 3, name: "She", isCorrect: false },
-            { id: 4, name: "It", isCorrect: false },
-          ]
-        },
-        {
-          id: 2, name: "second word", subQuestions: [
-            { id: 1, name: "start.", isCorrect: false },
-            { id: 2, name: "screen.", isCorrect: false },
-            { id: 3, name: "understand.", isCorrect: true },
-            { id: 4, name: "show.", isCorrect: false },
-          ]
-        },
-      ],
-    }
-  ];
-
   const [test, setTest] = useState(startTest);
-  const [sentence, setSentence] = useState(startTest[testId]);
-  const [testWord, setTestWord] = useState(sentence.questions[testWordId]);
+  const [sentence, setSentence] = useState<Sentence>({...startTest[0]});
+  const [testWord, setTestWord] = useState({...sentence.questions[testWordId]});
 
-  const onClick = (word: string, isCorrect: boolean) => {
+  const onClick = async (word: string, isCorrect: boolean) => {
     if (isCorrect) {
       const count = testWordId + 1;
       setTestWordId(testWordId + 1);
@@ -106,8 +147,7 @@ export default function LessonPage() {
       if (count < testWord.subQuestions.length) {
         setTestWord(sentence.questions[count]);
       }
-
-      if (sentence.questions.length === count) { 
+      if (sentence.questions.length === count) {
         setCountCompletedTest(countCompletedTest + 1);
         const countCompleted = countCompletedTest + 1;
         if (countCompleted === test.length) {
@@ -117,11 +157,13 @@ export default function LessonPage() {
           setTestWordId(0);
           setAnswer("");
           setCompletedTest(false);
+          setSentence({...sentence, isCompleted: true});
           setTestId(testId + 1);
           const countTestId = testId + 1;
           setSentence({ ...test[countTestId] });
-          const questions = { ...test[countTestId] }
+          const questions = { ...test[countTestId] };
           setTestWord(questions.questions[0]);
+
         }
       }
     }
@@ -131,12 +173,23 @@ export default function LessonPage() {
     }
   }
 
-  console.log("SENTENCE: ", startTest[testId]);
-  console.log("TEST WORD: ", sentence.questions[testWordId]);
-  console.log("countCompletedTest: ", countCompletedTest);
-  console.log("test length: ", test.length);
-  console.log("equal test length and countCompletedTest", test.length === countCompletedTest);
+  const showSentence = (id: number) => {
+    console.log("ID IN FUNCTION: ", id);
+    setTestWordId(0);
+    setAnswer("");
+    setCompletedTest(false);
+    setTestId(id);
+    const filteredSentence = test.filter((item) => item.id === id);
+    setSentence({ ...filteredSentence[0] });
+    const questions = { ...test[id] }
+    setTestWord(questions.questions[0]);
+  }
 
+  console.log("SENTENCE: ", sentence);
+  console.log("TEST WORD ID: ", testWordId);
+  console.log("TEST WORD: ", testWord);
+  console.log("TEST: ", test);
+  
   return (
     <div className={styles.lessonPage}>
       <h1>Lesson Topic</h1>
@@ -162,6 +215,19 @@ export default function LessonPage() {
               </Button>
             ))
             : <p className={styles.answer}>Correct!</p>}
+        </div>
+        <div className={styles.pagination}>
+          {test.map((item) => (
+            <Button
+              key={item.id}
+              size="s"
+              variant="primary"
+              onclick={() => {
+                showSentence(item.id)
+              }}>
+              {item.id}
+            </Button>
+          ))}
         </div>
       </div>
     </div>

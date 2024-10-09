@@ -31,3 +31,11 @@
   width: 100%;
   gap: 50px;
 }
+
+.pagination {
+  margin-top: 10px;
+}
+
+.pagination :nth-child(2n) {
+  margin: 0px 10px;
+}
