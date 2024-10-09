@@ -1,6 +1,6 @@
 'use client';
 import { Button } from 'core_ui_design_system';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styles from './styles.module.css';
 
 
@@ -30,8 +30,8 @@ const startTest = [
     isCompleted: false,
     questions: [
       {
-        id: 1, 
-        name: "first word", 
+        id: 1,
+        name: "first word",
         subQuestions: [
           { id: 1, name: "Does", isCorrect: false },
           { id: 2, name: "Will", isCorrect: true },
@@ -40,7 +40,7 @@ const startTest = [
         ]
       },
       {
-        id: 2, 
+        id: 2,
         name: "second word",
         subQuestions: [
           { id: 1, name: "I", isCorrect: false },
@@ -50,7 +50,7 @@ const startTest = [
         ]
       },
       {
-        id: 3, 
+        id: 3,
         name: "third word",
         subQuestions: [
           { id: 1, name: "Hide?", isCorrect: false },
@@ -67,8 +67,8 @@ const startTest = [
     isCompleted: false,
     questions: [
       {
-        id: 1, 
-        name: "first word", 
+        id: 1,
+        name: "first word",
         subQuestions: [
           { id: 1, name: "Does", isCorrect: false },
           { id: 2, name: "Will", isCorrect: false },
@@ -77,8 +77,8 @@ const startTest = [
         ]
       },
       {
-        id: 2, 
-        name: "second word", 
+        id: 2,
+        name: "second word",
         subQuestions: [
           { id: 1, name: "I", isCorrect: false },
           { id: 2, name: "She", isCorrect: true },
@@ -87,8 +87,8 @@ const startTest = [
         ]
       },
       {
-        id: 3, 
-        name: "third word", 
+        id: 3,
+        name: "third word",
         subQuestions: [
           { id: 1, name: "Start?", isCorrect: true },
           { id: 2, name: "Screen?", isCorrect: false },
@@ -104,8 +104,8 @@ const startTest = [
     isCompleted: false,
     questions: [
       {
-        id: 1, 
-        name: "first word", 
+        id: 1,
+        name: "first word",
         subQuestions: [
           { id: 1, name: "I", isCorrect: true },
           { id: 2, name: "He", isCorrect: false },
@@ -114,8 +114,8 @@ const startTest = [
         ]
       },
       {
-        id: 2, 
-        name: "second word", 
+        id: 2,
+        name: "second word",
         subQuestions: [
           { id: 1, name: "start.", isCorrect: false },
           { id: 2, name: "screen.", isCorrect: false },
@@ -131,40 +131,27 @@ export default function LessonPage() {
   const [answer, setAnswer] = useState("");
   const [isNotCorrect, setIsNotCorrect] = useState(false);
   const [testWordId, setTestWordId] = useState<number>(0);
-  const [completedTest, setCompletedTest] = useState<boolean>(false);
   const [testId, setTestId] = useState(0);
-  const [countCompletedTest, setCountCompletedTest] = useState<number>(0);
 
   const [test, setTest] = useState(startTest);
-  const [sentence, setSentence] = useState<Sentence>({...startTest[0]});
-  const [testWord, setTestWord] = useState({...sentence.questions[testWordId]});
+  const [sentence, setSentence] = useState<Sentence>({ ...startTest[0] });
+  const [testWord, setTestWord] = useState({ ...sentence.questions[testWordId] });
+
+  const [isCompletedSentence, setIsCompletedSentence] = useState<boolean>(false);
 
   const onClick = async (word: string, isCorrect: boolean) => {
     if (isCorrect) {
-      const count = testWordId + 1;
-      setTestWordId(testWordId + 1);
+      let count = 0;
       setAnswer(answer + word + " ");
-      if (count < testWord.subQuestions.length) {
+      if (testWord.id < sentence.questions.length) {
+        count = testWordId + 1;
+        setTestWordId(testWordId + 1);
         setTestWord(sentence.questions[count]);
       }
-      if (sentence.questions.length === count) {
-        setCountCompletedTest(countCompletedTest + 1);
-        const countCompleted = countCompletedTest + 1;
-        if (countCompleted === test.length) {
-          setCompletedTest(true);
-          setAnswer("You Completed Test!!!");
-        } else {
-          setTestWordId(0);
-          setAnswer("");
-          setCompletedTest(false);
-          setSentence({...sentence, isCompleted: true});
-          setTestId(testId + 1);
-          const countTestId = testId + 1;
-          setSentence({ ...test[countTestId] });
-          const questions = { ...test[countTestId] };
-          setTestWord(questions.questions[0]);
-
-        }
+      if (sentence.questions.length === testWord.id) {
+        setIsCompletedSentence(true);
+        setTestWordId(0);
+        setSentence({ ...sentence, isCompleted: true });
       }
     }
 
@@ -174,22 +161,15 @@ export default function LessonPage() {
   }
 
   const showSentence = (id: number) => {
-    console.log("ID IN FUNCTION: ", id);
+    setIsCompletedSentence(false);
     setTestWordId(0);
     setAnswer("");
-    setCompletedTest(false);
     setTestId(id);
     const filteredSentence = test.filter((item) => item.id === id);
     setSentence({ ...filteredSentence[0] });
-    const questions = { ...test[id] }
-    setTestWord(questions.questions[0]);
+    setTestWord(filteredSentence[0].questions[0]);
   }
 
-  console.log("SENTENCE: ", sentence);
-  console.log("TEST WORD ID: ", testWordId);
-  console.log("TEST WORD: ", testWord);
-  console.log("TEST: ", test);
-  
   return (
     <div className={styles.lessonPage}>
       <h1>Lesson Topic</h1>
@@ -202,33 +182,34 @@ export default function LessonPage() {
           }
         </div>
         <div className={styles.words}>
-          {!completedTest
+          {!isCompletedSentence
             ? testWord.subQuestions.map((subQuestion) => (
-              <Button
-                key={subQuestion.id}
-                size="l"
-                variant="primary"
-                onclick={() => {
-                  onClick(subQuestion.name, subQuestion.isCorrect);
-                }}>
-                {subQuestion.name}
-              </Button>
+              <div key={subQuestion.id} className={styles.word}>
+                <Button
+                  size="l"
+                  variant="primary"
+                  onclick={() => {
+                    onClick(subQuestion.name, subQuestion.isCorrect);
+                  }}>
+                  {subQuestion.name}
+                </Button>
+              </div>
             ))
             : <p className={styles.answer}>Correct!</p>}
         </div>
-        <div className={styles.pagination}>
-          {test.map((item) => (
-            <Button
-              key={item.id}
-              size="s"
-              variant="primary"
-              onclick={() => {
-                showSentence(item.id)
-              }}>
-              {item.id}
-            </Button>
-          ))}
-        </div>
+      </div>
+      <div className={styles.pagination}>
+        {test.map((item) => (
+          <Button
+            key={item.id}
+            size="s"
+            variant="primary"
+            onclick={() => {
+              showSentence(item.id)
+            }}>
+            {item.id}
+          </Button>
+        ))}
       </div>
     </div>
   );

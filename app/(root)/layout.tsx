@@ -24,11 +24,9 @@ export default function RootLayout({
   ];
 
   return (
-    <html lang="en">
-      <body>
-        <Navbar list={navbar} isSticky />
-        {children}
-      </body>
-    </html>
+    <main>
+      <Navbar list={navbar} isSticky />
+      {children}
+    </main>
   );
 }
