@@ -1,0 +1,27 @@
+.container {
+  display: flex;
+  justify-content: center;
+  margin-top: 100px;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form {
+  width: 30%;
+  margin-top: 25px;
+}
+
+.formItem {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.nameOfItem {
+  width: 40%;
+  font-size: 25px;
+  margin: 0px 0px;
+  display: flex;
+  align-self: center;
+}

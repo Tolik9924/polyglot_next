@@ -11,7 +11,7 @@ export default function RootLayout({
   const navbar = [
     {
       "id": "1",
-      "name": "Lessons"
+      "name": "lessons"
     },
     {
       "id": "2",

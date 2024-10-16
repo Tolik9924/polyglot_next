@@ -1,32 +1,43 @@
 'use client';
 import { Button } from 'core_ui_design_system';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './styles.module.css';
 
 
 interface SubQuestion {
-  id: number,
-  name: string,
-  isCorrect: boolean
+  id: number;
+  name: string;
+  isCorrect: boolean;
 }
 
 interface Question {
-  id: number,
-  name: string,
-  subQuestions: Array<SubQuestion>
+  id: number;
+  name: string;
+  subQuestions: Array<SubQuestion>;
 }
 
 interface Sentence {
-  id: number,
+  id: number;
   sentence: string;
+  correctAnswer: string;
   isCompleted: boolean;
-  questions: Array<Question>
+  questions: Array<Question>;
 };
+
+export const Variant = {
+  'primary': 'primary',
+  'secondary': 'secondary',
+  'success': 'success',
+  'error': 'error'
+};
+
+export type VariantType = keyof typeof Variant;
 
 const startTest = [
   {
     id: 1,
     sentence: "Ти покажеш?",
+    correctAnswer: "Will you show?",
     isCompleted: false,
     questions: [
       {
@@ -64,6 +75,7 @@ const startTest = [
   {
     id: 2,
     sentence: "Вона почала?",
+    correctAnswer: "Did she start?",
     isCompleted: false,
     questions: [
       {
@@ -101,6 +113,7 @@ const startTest = [
   {
     id: 3,
     sentence: "Я розумію.",
+    correctAnswer: "I understand.",
     isCompleted: false,
     questions: [
       {
@@ -127,17 +140,18 @@ const startTest = [
   }
 ];
 
+const variants: string[] = ["primary", "secondary", "success", "error"];
+
 export default function LessonPage() {
   const [answer, setAnswer] = useState("");
   const [isNotCorrect, setIsNotCorrect] = useState(false);
   const [testWordId, setTestWordId] = useState<number>(0);
-  const [testId, setTestId] = useState(0);
+  const [testId, setTestId] = useState(1);
 
   const [test, setTest] = useState(startTest);
   const [sentence, setSentence] = useState<Sentence>({ ...startTest[0] });
   const [testWord, setTestWord] = useState({ ...sentence.questions[testWordId] });
-
-  const [isCompletedSentence, setIsCompletedSentence] = useState<boolean>(false);
+  const [randomVariants, setRandomVariants] = useState<string[]>([]);
 
   const onClick = async (word: string, isCorrect: boolean) => {
     if (isCorrect) {
@@ -149,9 +163,17 @@ export default function LessonPage() {
         setTestWord(sentence.questions[count]);
       }
       if (sentence.questions.length === testWord.id) {
-        setIsCompletedSentence(true);
         setTestWordId(0);
+        const newSentence = { ...sentence, isCompleted: true };
         setSentence({ ...sentence, isCompleted: true });
+        const updatedTest = test.filter((item) => {
+          return item.id !== testId;
+        });
+        updatedTest.push(newSentence);
+        updatedTest.sort((a, b) => {
+          return a.id - b.id;
+        });
+        setTest([...updatedTest]);
       }
     }
 
@@ -160,15 +182,32 @@ export default function LessonPage() {
     }
   }
 
-  const showSentence = (id: number) => {
-    setIsCompletedSentence(false);
+  const showSentence = (id: number, isCompleted: boolean) => {
     setTestWordId(0);
-    setAnswer("");
     setTestId(id);
     const filteredSentence = test.filter((item) => item.id === id);
     setSentence({ ...filteredSentence[0] });
     setTestWord(filteredSentence[0].questions[0]);
+    if (isCompleted) {
+      setAnswer(filteredSentence[0].correctAnswer);
+    } else {
+      setAnswer("");
+    }
   }
+
+  const shuffle = (array: string[]) => {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+    return newArray;
+  };
+
+  useEffect(() => {
+    const shuffledArray = shuffle(variants);
+    setRandomVariants([...shuffledArray]);
+  }, [sentence]);
 
   return (
     <div className={styles.lessonPage}>
@@ -182,20 +221,25 @@ export default function LessonPage() {
           }
         </div>
         <div className={styles.words}>
-          {!isCompletedSentence
-            ? testWord.subQuestions.map((subQuestion) => (
-              <div key={subQuestion.id} className={styles.word}>
-                <Button
-                  size="l"
-                  variant="primary"
-                  onclick={() => {
-                    onClick(subQuestion.name, subQuestion.isCorrect);
-                  }}>
-                  {subQuestion.name}
-                </Button>
-              </div>
-            ))
-            : <p className={styles.answer}>Correct!</p>}
+          {!sentence.isCompleted
+            ? testWord.subQuestions.map((subQuestion, index) => {
+
+              const variant = randomVariants[index];
+
+              return (
+                <div key={subQuestion.id} className={styles.word}>
+                  <Button
+                    size="l"
+                    variant={`${variant as VariantType}`}
+                    onclick={() => {
+                      onClick(subQuestion.name, subQuestion.isCorrect);
+                    }}>
+                    {subQuestion.name}
+                  </Button>
+                </div>
+              );
+            })
+            : <p className={styles.correct}>Correct!</p>}
         </div>
       </div>
       <div className={styles.pagination}>
@@ -203,9 +247,9 @@ export default function LessonPage() {
           <Button
             key={item.id}
             size="s"
-            variant="primary"
+            variant={item.isCompleted ? "success" : "primary"}
             onclick={() => {
-              showSentence(item.id)
+              showSentence(item.id, item.isCompleted)
             }}>
             {item.id}
           </Button>
