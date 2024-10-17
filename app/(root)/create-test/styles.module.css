@@ -25,3 +25,40 @@
   display: flex;
   align-self: center;
 }
+
+.nameOfSubItem {
+  width: 40%;
+  font-size: 20px;
+  margin: 0px 0px;
+  display: flex;
+  align-self: center;
+}
+
+.subItemContainer {
+  margin-bottom: 40px;
+}
+
+.nameOfQuestion {
+  display: flex;
+  flex-direction: row;
+  margin: 30px 0px;
+}
+
+.subQuestionContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nameOfSubquestion {
+  width: 40%;
+  font-size: 15px;
+  margin: 20px 0px;
+  display: flex;
+  align-self: center;
+}
+
+.addSubquestion {
+  margin-top: 20px;
+}
