@@ -139,7 +139,9 @@ export default function CreateTestPage() {
             <Button size="xs" onclick={addAnswer}>Add Answer</Button>
           </div>
         </div>
-        <Button size="xs" onclick={sendTest}>Save Test</Button>
+        <div className={styles.saveTestContainer}>
+          <Button size="l" onclick={sendTest}>Save Test</Button>
+        </div>
       </div>
     </div>
   );
