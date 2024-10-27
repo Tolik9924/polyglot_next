@@ -19,7 +19,7 @@
 }
 
 .nameOfItem {
-  width: 40%;
+  width: 30%;
   font-size: 25px;
   margin: 0px 0px;
   display: flex;
@@ -61,4 +61,45 @@
 
 .addSubquestion {
   margin-top: 20px;
+}
+
+.testItem {
+  width: 100%;
+}
+
+.variantsofAnswer {
+  display: flex;
+  justify-content: center;
+  font-size: 25px;
+}
+
+.test {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.test:nth-child(n+1) {
+  margin: 10px 0px;
+}
+
+.nameOfTest {
+  width: 15%;
+}
+
+.inputContainer {
+  width: 70%;
+}
+
+.checkboxContainer {
+  width: 30%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.buttonContainer {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
 }
