@@ -1,148 +1,94 @@
 'use client';
 
-import { useState } from 'react';
-
-import { Button, Checkbox, Input } from 'core_ui_design_system';
+import { Button, Input } from 'antd';
+import { useForm, SubmitHandler, Controller } from "react-hook-form"
 
 import styles from './styles.module.css';
-
-interface Test {
-  id: number;
-  name: string;
-  isCorrect: boolean;
-}
 
 interface SaveTest {
   sentence: string,
   ukrainian: string,
-  test: Array<Test>
 }
 
 export default function CreateTestPage() {
-  const [sentence, setSentence] = useState("");
-  const [ukrainian, setUkrainian] = useState("");
-  const [test, setTest] = useState<Array<Test>>([{
-    id: 1,
-    name: "",
-    isCorrect: false
-  }]);
-  const [saveTest, setSaveTest] = useState<SaveTest>();
+  const { control, handleSubmit, formState: { errors } } = useForm<SaveTest>({
+    defaultValues: {
+      sentence: "",
+      ukrainian: "",
+    }
+  });
 
-  const handleChangeSentence = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSentence(event.target.value);
-  };
-
-  const handleChangeUkrainian = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUkrainian(event.target.value);
-  };
-
-  const handleChangeNameQuestion = (
-    id: number,
-    event: React.ChangeEvent<HTMLInputElement>) => {
-    setTest(test.map((item) => {
-      if (item.id === id) {
-        return {
-          ...item,
-          name: event.target.value
-        }
-      } else {
-        return { ...item };
-      }
-    }));
-  };
-
-  const handleChangeIsCorrect = (id: number) => {
-    setTest(test.map((item) => {
-      if (item.id === id) {
-        return {
-          ...item,
-          isCorrect: !item.isCorrect
-        }
-      } else {
-        return { ...item };
-      }
-    }));
-  };
-
-  const addAnswer = () => {
-    setTest([
-      ...test,
-      {
-        id: test.length + 1,
-        name: "",
-        isCorrect: false
-      }
-    ]);
-  };
-
-  const sendTest = () => {
-    setSaveTest({
-      sentence: sentence,
-      ukrainian: ukrainian,
-      test: test
-    });
-  };
-
-  console.log("Sentence: ", sentence);
-  console.log("Ukrainian: ", ukrainian);
-  console.log("Test: ", test);
-  console.log("Send Test: ", saveTest);
+  const onSubmit: SubmitHandler<SaveTest> = (data) => {
+    console.log("Data: ", data)
+  }
 
   return (
     <div className={styles.container}>
       <h1 className={styles.header}>Create Sentence</h1>
-      <div className={styles.form}>
+      <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
         <div className={styles.formItem}>
           <p className={styles.nameOfItem}>English: </p>
-          <Input
-            value={sentence}
-            handleChange={handleChangeSentence}
-            label="sentence"
-            size="l"
-            fullWidth={true}
+          <Controller
+            name="sentence"
+            control={control}
+            rules={{ 
+              required: 'Input english sentence.',
+              minLength: {
+                value: 5,
+                message: "More than 5 characters."
+              },
+              maxLength: {
+                value: 30,
+                message: "No more than 30 characters."
+              },
+              pattern: {
+                value: /[A-za-z][?|!|.]/,
+                message: "Must be English letters and in the end of sentence ! or ? or ."
+              }  
+            }}
+            render={({ field }) => <Input size='large' {...field} />}
           />
         </div>
+        {errors.sentence && (
+          <p className={styles.errorMessage}>{errors.sentence.message}</p>
+        )}
         <div className={styles.formItem}>
           <p className={styles.nameOfItem}>Ukrainian: </p>
-          <Input
-            value={ukrainian}
-            handleChange={handleChangeUkrainian}
-            label="речення"
-            size="l"
-            fullWidth={true}
+          <Controller
+            name="ukrainian"
+            control={control}
+            rules={{ 
+              required: 'Введіть перекладену відповідь.',
+              minLength: {
+                value: 5,
+                message: "Більше ніж 5 літер.",
+              },
+              maxLength: {
+                value: 30,
+                message: "Не більше ніж 30 літер."
+              },
+              pattern: {
+                value: /[А-Яа-я][?|!|.]/,
+                message: "Повинні бути українські літери та в кінці речення! чи ? або ."
+              } 
+            }}
+            render={({ field }) => <Input size='large' {...field} />}
           />
         </div>
-        <div className={styles.testItem}>
-          <p className={styles.variantsofAnswer}>Variants of Answer</p>
-          {test.map((item) => (
-            <div key={item.id} className={styles.test}>
-              <p className={styles.nameOfItem}>Word: </p>
-              <div className={styles.inputContainer}>
-                <Input
-                  value={item.name}
-                  handleChange={(event) => handleChangeNameQuestion(item.id, event)}
-                  label="Word"
-                  size="l"
-                  fullWidth={true}
-                />
-              </div>
-              <div className={styles.checkboxContainer}>
-                <Checkbox
-                  span="Is Correct Answer"
-                  checked={item.isCorrect}
-                  onChange={() => handleChangeIsCorrect(item.id)}
-                />
-              </div>
-            </div>
-          ))}
-          <div className={styles.buttonContainer}>
-            <Button size="xs" onclick={addAnswer}>Add Answer</Button>
-          </div>
-        </div>
+        {errors.sentence && (
+          <p className={styles.errorMessage}>{errors.ukrainian?.message}</p>
+        )}
         <div className={styles.saveTestContainer}>
-          <Button size="l" onclick={sendTest}>Save Test</Button>
+          <Button
+            size="large"
+            type='primary'
+            htmlType='submit'
+            block
+          >
+            Save Test
+          </Button>
         </div>
-      </div>
+      </form>
     </div>
   );
 };

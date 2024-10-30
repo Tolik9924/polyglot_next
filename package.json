@@ -9,10 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "antd": "^5.21.6",
     "core_ui_design_system": "^0.2.0",
     "next": "14.2.14",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-hook-form": "^7.53.1"
   },
   "devDependencies": {
     "@types/node": "^20",

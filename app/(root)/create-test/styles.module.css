@@ -73,3 +73,9 @@
   justify-content: center;
   width: 100%;
 }
+
+.errorMessage {
+  color: rgb(211, 47, 47);
+  display: flex;
+  justify-content: center;
+}
